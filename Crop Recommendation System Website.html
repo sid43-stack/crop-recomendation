@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harvest Helper Pro - Strategic Farming</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .result-card {
+            background: linear-gradient(135deg, #6EE7B7, #3B82F6);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900">Harvest Helper Pro</h1>
+            <p class="mt-2 text-lg text-gray-600">Strategic Crop Recommendations for Modern Farming</p>
+        </header>
+
+        <!-- Main Navigation Bar -->
+        <div class="mb-6">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+                    <button id="tab-recommend" class="tab-btn border-blue-500 text-blue-600 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('recommend')">
+                        Recommend a Crop
+                    </button>
+                    <button id="tab-strategy" class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('strategy')">
+                        Crop Strategy
+                    </button>
+                    <button id="tab-conditions" class="tab-btn border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" onclick="switchTab('conditions')">
+                        Find Crop Conditions
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <main>
+            <div id="loader" class="flex justify-center items-center h-64">
+                <div class="loader"></div>
+                <p class="ml-4 text-gray-600">Loading agricultural data...</p>
+            </div>
+
+            <!-- Section 1: Recommend a Crop -->
+            <div id="recommend-content" class="main-content hidden">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-6">Enter Your Farm's Conditions</h2>
+                    <form id="recommendationForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="N" class="block text-sm font-medium text-gray-700">Nitrogen (N) Content (kg/ha)</label>
+                            <input type="number" id="N" name="N" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 90" required>
+                        </div>
+                        <div>
+                            <label for="P" class="block text-sm font-medium text-gray-700">Phosphorus (P) Content (kg/ha)</label>
+                            <input type="number" id="P" name="P" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 42" required>
+                        </div>
+                        <div>
+                            <label for="K" class="block text-sm font-medium text-gray-700">Potassium (K) Content (kg/ha)</label>
+                            <input type="number" id="K" name="K" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 43" required>
+                        </div>
+                        <div>
+                            <label for="temperature" class="block text-sm font-medium text-gray-700">Temperature (°C)</label>
+                            <input type="number" step="0.1" id="temperature" name="temperature" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 20.8" required>
+                        </div>
+                        <div>
+                            <label for="humidity" class="block text-sm font-medium text-gray-700">Relative Humidity (%)</label>
+                            <input type="number" step="0.1" id="humidity" name="humidity" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 82" required>
+                        </div>
+                        <div>
+                            <label for="ph" class="block text-sm font-medium text-gray-700">Soil pH Value</label>
+                            <input type="number" step="0.1" id="ph" name="ph" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 6.5" required>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="rainfall" class="block text-sm font-medium text-gray-700">Rainfall (mm)</label>
+                            <input type="number" step="0.1" id="rainfall" name="rainfall" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="e.g., 202" required>
+                        </div>
+                        <div class="md:col-span-2 text-center mt-4">
+                            <button type="submit" class="w-full md:w-auto inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Get Recommendation
+                            </button>
+                        </div>
+                    </form>
+                    <div id="recommendationResult" class="mt-8"></div>
+                </div>
+            </div>
+
+            <!-- Section 2: Crop Strategy -->
+            <div id="strategy-content" class="main-content hidden">
+                <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-2">Crop Strategy Planner</h2>
+                    <p class="text-sm text-gray-500 mb-6">Select a crop to see its detailed economic and seasonal strategy.</p>
+                    
+                    <div class="mb-6">
+                         <label for="strategyCropFilter" class="block text-sm font-medium text-gray-700">Select Crop for Detailed Strategy</label>
+                         <select id="strategyCropFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                         </select>
+                    </div>
+
+                    <div id="strategyDetail">
+                        <div class="text-center py-10 text-gray-500">
+                            <p>Please select a crop to view its strategy card.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Find Crop Conditions -->
+            <div id="conditions-content" class="main-content hidden">
+                 <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold mb-6">Find Ideal Conditions for a Crop</h2>
+                    <form id="conditionsForm" class="grid grid-cols-1 gap-6">
+                         <div>
+                            <label for="crop-select" class="block text-sm font-medium text-gray-700">Select a Crop</label>
+                            <select id="crop-select" name="crop-select" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                            </select>
+                        </div>
+                        <div class="text-center mt-4">
+                             <button type="submit" class="w-full md:w-auto inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                Show Conditions
+                            </button>
+                        </div>
+                    </form>
+                    <div id="conditionsResult" class="mt-8"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-12 text-gray-500 text-sm">
+            <p>&copy; 2024 Harvest Helper Pro. Empowering farmers with data.</p>
+        </footer>
+    </div>
+
+    <script>
+        // --- DATA AND CONFIGURATION ---
+        const CROP_ECONOMICS = {
+            'rice': { yield: 45, price: 2000, cost: 28000, season: 'Kharif', duration: 120, rotation: 'chickpea' },
+            'maize': { yield: 50, price: 1800, cost: 25000, season: 'Kharif', duration: 110, rotation: 'lentil' },
+            'chickpea': { yield: 15, price: 4500, cost: 22000, season: 'Rabi', duration: 100, rotation: 'maize' },
+            'kidneybeans': { yield: 12, price: 6000, cost: 26000, season: 'Rabi', duration: 90, rotation: 'rice' },
+            'pigeonpeas': { yield: 10, price: 5500, cost: 20000, season: 'Kharif', duration: 150, rotation: 'wheat' },
+            'mothbeans': { yield: 8, price: 7000, cost: 18000, season: 'Kharif', duration: 75, rotation: 'mustard' },
+            'mungbean': { yield: 10, price: 6500, cost: 21000, season: 'Zaid', duration: 70, rotation: 'maize' },
+            'blackgram': { yield: 9, price: 6800, cost: 23000, season: 'Kharif', duration: 80, rotation: 'wheat' },
+            'lentil': { yield: 12, price: 5000, cost: 19000, season: 'Rabi', duration: 110, rotation: 'rice' },
+            'pomegranate': { yield: 100, price: 8000, cost: 120000, season: 'Perennial', duration: 365, rotation: 'groundnut' },
+            'banana': { yield: 400, price: 1500, cost: 200000, season: 'Perennial', duration: 330, rotation: 'sugarcane' },
+            'mango': { yield: 80, price: 6000, cost: 90000, season: 'Perennial', duration: 365, rotation: 'vegetables' },
+            'grapes': { yield: 200, price: 4000, cost: 250000, season: 'Perennial', duration: 365, rotation: 'soybean' },
+            'watermelon': { yield: 250, price: 800, cost: 30000, season: 'Zaid', duration: 80, rotation: 'pulses' },
+            'muskmelon': { yield: 200, price: 1000, cost: 32000, season: 'Zaid', duration: 75, rotation: 'pulses' },
+            'apple': { yield: 150, price: 7000, cost: 150000, season: 'Rabi', duration: 210, rotation: 'clover' },
+            'orange': { yield: 120, price: 4000, cost: 100000, season: 'Rabi', duration: 270, rotation: 'groundnut' },
+            'papaya': { yield: 300, price: 1200, cost: 60000, season: 'Perennial', duration: 270, rotation: 'maize' },
+            'coconut': { yield: 80, price: 3000, cost: 80000, season: 'Perennial', duration: 365, rotation: 'banana' },
+            'cotton': { yield: 15, price: 5500, cost: 40000, season: 'Kharif', duration: 180, rotation: 'wheat' },
+            'jute': { yield: 25, price: 4000, cost: 35000, season: 'Kharif', duration: 130, rotation: 'rice' },
+            'coffee': { yield: 10, price: 20000, cost: 200000, season: 'Kharif', duration: 365, rotation: 'pepper' }
+        };
+        
+        let environmentalData = [];
+        let masterData = {};
+        const K_NEIGHBORS = 5;
+
+        // UI Elements
+        const loader = document.getElementById('loader');
+        const recommendForm = document.getElementById('recommendationForm');
+        const conditionsForm = document.getElementById('conditionsForm');
+        const recommendationResult = document.getElementById('recommendationResult');
+        const conditionsResult = document.getElementById('conditionsResult');
+        const cropSelect = document.getElementById('crop-select');
+        const strategyCropFilter = document.getElementById('strategyCropFilter');
+        const strategyDetail = document.getElementById('strategyDetail');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAndProcessData();
+        });
+
+        function loadAndProcessData() {
+            try {
+                // FIX: Embed data as a string to prevent network errors
+                const csvText = `N,P,K,temperature,humidity,ph,rainfall,label
+90,42,43,20.87974371,82.00274423,6.502985292,202.9355362,rice
+85,58,41,21.77046169,80.31964408,7.038096361,226.6555374,rice
+60,55,44,23.00445915,82.3207629,7.840207141,263.9642476,rice
+74,35,40,26.49109635,80.15836264,6.980401052,242.8640342,rice
+78,42,42,20.13017482,81.604873,7.628472935,262.717341,rice
+22,32,55,24.8,85.5,6.1,142.5,jute
+41,62,22,23.5,60.3,5.5,65.2,maize
+42,70,20,21.0,62.1,6.8,70.5,maize
+20,130,200,22.7,92.3,5.6,115.6,pigeonpeas
+21,135,195,24.1,90.7,6.7,118.5,pigeonpeas
+40,10,10,18.8,35.4,6.1,55.5,lentil
+42,12,8,17.2,40.1,7.2,48.3,lentil
+20,30,20,27,18,5,100,mungbean
+18,25,22,29,22,6,110,mungbean
+80,40,40,25.5,80.0,6.8,175.0,jute
+40,15,20,28.5,65.2,7.1,75.8,blackgram
+38,18,22,27.9,68.4,6.9,80.1,blackgram
+22,72,21,18.9,15.1,6.8,80.9,kidneybeans
+20,68,19,17.2,16.5,5.9,102.4,kidneybeans
+10,15,15,25.1,28.4,5.8,45.2,mothbeans
+12,18,18,26.9,33.1,6.9,51.4,mothbeans
+30,60,50,23.1,85.4,5.9,105.7,cotton
+35,55,52,24.5,80.1,6.5,90.2,cotton
+85,25,50,26.5,70.3,7.2,160.5,banana
+90,30,48,25.9,75.1,6.8,180.2,banana
+22,25,32,32.1,55.2,6.1,95.3,mango
+18,30,35,30.5,50.1,5.2,98.2,mango
+18,130,205,21.5,91.3,5.8,110.4,apple
+22,125,200,22.1,90.2,6.1,115.8,apple
+82,15,35,28.2,90.5,6.3,115.2,muskmelon
+105,18,55,29.5,92.1,6.9,100.5,muskmelon
+95,12,45,25.5,93.1,6.2,250.2,watermelon
+98,10,50,26.1,95.3,6.8,240.8,watermelon`;
+
+                const rows = csvText.split('\n').slice(1);
+                environmentalData = rows.map(row => {
+                    const columns = row.split(',');
+                    if (columns.length === 8) {
+                        return {
+                            N: parseFloat(columns[0]), P: parseFloat(columns[1]), K: parseFloat(columns[2]),
+                            temperature: parseFloat(columns[3]), humidity: parseFloat(columns[4]),
+                            ph: parseFloat(columns[5]), rainfall: parseFloat(columns[6]),
+                            label: columns[7].trim()
+                        };
+                    }
+                    return null;
+                }).filter(row => row && row.label);
+
+                const cropAverages = calculateAverages(environmentalData);
+                for (const crop in CROP_ECONOMICS) {
+                    masterData[crop] = {
+                        ...CROP_ECONOMICS[crop],
+                        averages: cropAverages[crop] || null
+                    };
+                }
+
+                populateCropSelects();
+                
+                loader.classList.add('hidden');
+                switchTab('recommend');
+                
+            } catch (error) {
+                 console.error('Failed to load or process crop data:', error);
+                 loader.innerHTML = `<p class="text-red-500">A critical error occurred while loading data. Please refresh.</p>`;
+            }
+        }
+
+        function calculateAverages(data) {
+            const cropGroups = {};
+            const averages = {};
+            for (const entry of data) {
+                if (!cropGroups[entry.label]) {
+                    cropGroups[entry.label] = { N: [], P: [], K: [], temperature: [], humidity: [], ph: [], rainfall: [] };
+                }
+                Object.keys(cropGroups[entry.label]).forEach(key => cropGroups[entry.label][key].push(entry[key]));
+            }
+            for (const crop in cropGroups) {
+                averages[crop] = {};
+                for (const param in cropGroups[crop]) {
+                    const sum = cropGroups[crop][param].reduce((a, b) => a + b, 0);
+                    averages[crop][param] = sum / cropGroups[crop][param].length;
+                }
+            }
+            return averages;
+        }
+        
+        function populateCropSelects() {
+            const cropNames = Object.keys(masterData).sort();
+            const optionsHtml = cropNames.map(crop => `<option value="${crop}">${crop.charAt(0).toUpperCase() + crop.slice(1)}</option>`).join('');
+            
+            cropSelect.innerHTML = optionsHtml;
+            strategyCropFilter.innerHTML = `<option value="all" selected>Select a crop to see details...</option>` + optionsHtml;
+        }
+
+        function euclideanDistance(a, b) {
+            const features = ['N', 'P', 'K', 'temperature', 'humidity', 'ph', 'rainfall'];
+            let sum = 0;
+            for (const feature of features) { sum += (a[feature] - b[feature]) ** 2; }
+            return Math.sqrt(sum);
+        }
+
+        function recommendCrop(inputConditions) {
+            const distances = environmentalData.map(dataPoint => ({
+                dist: euclideanDistance(inputConditions, dataPoint),
+                label: dataPoint.label
+            }));
+            distances.sort((a, b) => a.dist - b.dist);
+            const neighbors = distances.slice(0, K_NEIGHBORS);
+            const votes = {};
+            for (const neighbor of neighbors) { votes[neighbor.label] = (votes[neighbor.label] || 0) + 1; }
+            let bestCrop = '', maxVotes = 0;
+            for (const crop in votes) {
+                if (votes[crop] > maxVotes) {
+                    maxVotes = votes[crop];
+                    bestCrop = crop;
+                }
+            }
+            return bestCrop;
+        }
+
+        recommendForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(recommendForm);
+            const inputConditions = {
+                N: parseFloat(formData.get('N')), P: parseFloat(formData.get('P')), K: parseFloat(formData.get('K')),
+                temperature: parseFloat(formData.get('temperature')), humidity: parseFloat(formData.get('humidity')),
+                ph: parseFloat(formData.get('ph')), rainfall: parseFloat(formData.get('rainfall')),
+            };
+            if (Object.values(inputConditions).some(isNaN)) {
+                recommendationResult.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg"><p>Please fill in all fields with valid numbers.</p></div>`;
+                return;
+            }
+            const recommendedCrop = recommendCrop(inputConditions);
+            displayRecommendation(recommendedCrop);
+        });
+        
+        conditionsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const selectedCrop = cropSelect.value;
+            displayConditions(selectedCrop);
+        });
+
+        strategyCropFilter.addEventListener('change', (e) => {
+            const selectedCrop = e.target.value;
+            if (selectedCrop === 'all') {
+                 strategyDetail.innerHTML = `<div class="text-center py-10 text-gray-500"><p>Please select a crop to view its strategy card.</p></div>`;
+            } else {
+                strategyDetail.innerHTML = createStrategyCardHTML(selectedCrop, true);
+            }
+        });
+
+        function displayRecommendation(cropName) {
+            const capitalizedCrop = cropName.charAt(0).toUpperCase() + cropName.slice(1);
+            recommendationResult.innerHTML = `
+                <div class="result-card text-white p-8 rounded-lg shadow-xl text-center">
+                    <p class="text-lg font-medium">Based on your conditions, the best crop to plant is:</p>
+                    <h3 class="text-5xl font-bold mt-2">${capitalizedCrop}</h3>
+                    <p class="text-sm opacity-80 mt-4">For more details on profitability and season, visit the 'Crop Strategy' section.</p>
+                </div>
+            `;
+        }
+        
+        function displayConditions(cropName) {
+             const cropInfo = masterData[cropName];
+             const capitalizedCrop = cropName.charAt(0).toUpperCase() + cropName.slice(1);
+             let conditionsHtml = '<p class="text-gray-500">No environmental data available for this crop.</p>';
+             
+             if (cropInfo.averages) {
+                 conditionsHtml = `
+                    <h4 class="text-lg font-semibold mb-2">Ideal Environmental Conditions</h4>
+                    <ul class="space-y-1 text-gray-700">
+                        ${Object.entries(cropInfo.averages).map(([key, value]) => `
+                            <li class="flex justify-between"><span>${key.charAt(0).toUpperCase() + key.slice(1)}:</span> <span class="font-medium">${value.toFixed(2)}</span></li>
+                        `).join('')}
+                    </ul>
+                 `;
+             }
+             
+             conditionsResult.innerHTML = `
+                <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-6">
+                    <h3 class="text-xl font-semibold text-center">Complete Profile for ${capitalizedCrop}</h3>
+                    <div>${conditionsHtml}</div>
+                    <div>${createStrategyCardHTML(cropName)}</div>
+                </div>
+             `;
+        }
+        
+        function createStrategyCardHTML(cropName, isMainView = false) {
+            const economics = masterData[cropName];
+            const capitalizedCrop = cropName.charAt(0).toUpperCase() + cropName.slice(1);
+            const profit = (economics.yield * economics.price) - economics.cost;
+            const formattedProfit = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(profit);
+            const formattedPrice = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(economics.price);
+            const formattedCost = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(economics.cost);
+
+            const containerClass = isMainView ? 'mt-6 p-6 bg-gray-50 rounded-lg border border-gray-200' : '';
+            
+            return `
+                <div class="${containerClass}">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Full Strategy: ${capitalizedCrop}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2 text-green-700">Profitability Breakdown</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex justify-between"><span>Est. Net Profit:</span> <span class="font-bold text-lg text-green-600">${formattedProfit}/ha</span></li>
+                                <li class="flex justify-between border-t pt-2"><span>Average Yield:</span> <span class="font-medium">${economics.yield} Quintal/ha</span></li>
+                                <li class="flex justify-between"><span>Market Price:</span> <span class="font-medium">${formattedPrice}/Quintal</span></li>
+                                <li class="flex justify-between"><span>Cultivation Cost:</span> <span class="font-medium text-red-500">-${formattedCost}/ha</span></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2 text-blue-700">Calendar & Soil Health</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li class="flex justify-between"><span>Primary Season:</span> <span class="font-bold text-lg">${economics.season}</span></li>
+                                <li class="flex justify-between border-t pt-2"><span>Crop Duration:</span> <span class="font-medium">~${economics.duration} Days</span></li>
+                                <li class="flex justify-between"><span>Rotation Suggestion:</span> <span class="font-medium">Plant ${economics.rotation} next</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(tab => {
+                tab.classList.remove('border-blue-500', 'text-blue-600');
+                tab.classList.add('border-transparent', 'text-gray-500');
+            });
+            document.querySelectorAll('.main-content').forEach(content => content.classList.add('hidden'));
+            document.getElementById(`tab-${tabName}`).classList.add('border-blue-500', 'text-blue-600');
+            document.getElementById(`${tabName}-content`).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
