@@ -37,7 +37,7 @@ class CropRecommender:
         except FileNotFoundError:
             print(f"Error: The file at '{self.dataset_path}' was not found.")
             print("Attempting to load from a remote URL as a fallback...")
-            url = 'https://raw.githubusercontent.com/Gladiator07/Harvestify/master/Crop_recommendation.csv'
+            url = 'https://github.com/Gladiator07/Harvestify/blob/master/Data-processed/crop_recommendation.csv'
             try:
                 self.data = pd.read_csv(url)
                 print("Dataset loaded successfully from remote URL.")
@@ -180,3 +180,4 @@ if __name__ == '__main__':
                 print(f"  - {key.capitalize()}: {value:.2f}")
         else:
             print(conditions)
+
